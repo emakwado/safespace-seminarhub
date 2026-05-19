@@ -1,0 +1,41 @@
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+interface User {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  fullName: string
+  role: string
+  avatar?: string
+  emailVerified: boolean
+}
+
+interface AuthState {
+  user: User | null
+  accessToken: string | null
+  refreshToken: string | null
+  setUser: (user: User, accessToken: string, refreshToken: string) => void
+  setTokens: (accessToken: string, refreshToken: string) => void
+  clearAuth: () => void
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+      setUser: (user, accessToken, refreshToken) =>
+        set({ user, accessToken, refreshToken }),
+      setTokens: (accessToken, refreshToken) =>
+        set({ accessToken, refreshToken }),
+      clearAuth: () =>
+        set({ user: null, accessToken: null, refreshToken: null }),
+    }),
+    {
+      name: "auth-storage",
+    }
+  )
+)
